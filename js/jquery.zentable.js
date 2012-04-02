@@ -77,7 +77,7 @@
         var columns= [ {name:'Empty'}];
         var colWidth= new Array();
         var table, field, scroll, overlay, tip, status;
-        var instance= this;
+        instance= this;
         var needsScroll= false;
         var dragStart, colWidthStart, usedStart;
         var cells= new Array();
@@ -114,6 +114,8 @@
             field.fadeOut(250);
             overlay.fadeOut(500);
         };
+
+
 
         function getWidth() {
             return table.width() - 9 * cols - (instance.data.getSize()>rows ? 20 : 0);	// padding*2 + 1
@@ -603,11 +605,12 @@
         this.base();
 
         this.order= "";
-        this.cache= new Array();
+        cache= new Array();
         this.cacheOrder = '';
         this.cacheContents = '';        //TODO: this should contain the request parameters the cache is already filled with, so we dn't ask for the same thing twice.
         this.rowclasses= new Array();
         this.instance= this;
+		var instance= this;
         this.totalRows= 0;
         this.loading= false;
         pageSize== null ? 10 : pageSize;
@@ -641,7 +644,7 @@
 
             var offset= $(response).find("offset").text();
             $(response).find("headers").find("col").each(function(i) { 
-                this.instance.cols[i]= { 
+                instance.cols[i]= { 
                     name:$(this).text(),
                     id: $(this).attr("id"),
                     html:$(this).attr("html")!=null,
@@ -653,7 +656,7 @@
             });
 
             $(response).find("row").each(function(i) {
-                this.cache[offset*1+i]= { 
+                cache[offset*1+i]= { 
                         values:new Array(), 
                         clss:$(this).attr("class") };
                 $(this).find("col").each(function(j) {
@@ -661,12 +664,12 @@
                     var tmp= instance.cols[j].html ? t.text() : t.text().split("<").join("&lt;").split(">").join("&gt;");
                     if (t.attr("link")!=null)
                         tmp= "<a href=\""+t.attr("link")+"\">" + tmp + "</a>";
-                    this.cache[offset*1+i].values[j]= tmp;
+                    cache[offset*1+i].values[j]= tmp;
                 });            
             });
 
             $(response).find("totals").find("col").each(function(i) {
-                this.instance.totals[i]= $(this).text();
+                instance.totals[i]= $(this).text();
             });
 
             this.listener.dataLoaded();         
@@ -682,7 +685,7 @@
             else
                 this.order= col;
             this.listener.setOrderSign(i, new RegExp (" desc$").test(this.order));
-            this.cache= new Array();
+            cache= new Array();
             this.loadPage(0);            
         };
 
@@ -691,15 +694,15 @@
         };
 
         this.getRow= function(row) {
-            if (row<this.getSize() && !this.cache[row] && !this.loading)
+            if (row<this.getSize() && !cache[row] && !this.loading)
                 this.loadPage(row);
-            if (this.cache[row]==null)
+            if (cache[row]==null)
                 return null;
-           return this.cache[row].values;
+           return cache[row].values;
         };
 
         this.getRowClass= function(row) {
-            if (this.cache[row]==null)
+            if (cache[row]==null)
                 return null;
             return this.cache[row].clss;
         };
@@ -711,7 +714,6 @@
             this.loading= true;
             if (this.listener!=null)
                 this.listener.setLoading(true);
-        
             var filtSQL= '';
             for (i=0; i<this.filters.length; i++) {                
                 var field= $("#"+this.filters[i]);
@@ -725,14 +727,14 @@
                 case 'checkbox': 
                     value= field.attr("checked") ? field.attr("value") : "";
                 }
-                filtSQL += "&"+ filters[i] + "=" + value;
+                filtSQL += "&"+ this.filters[i] + "=" + value;
             }
-
             $.ajax({
                 type:"GET",
                 url: href+"&start="+row+"&pagesize="+this.pageSize+"&order="+this.order+filtSQL,
                 dataType: "xml",
-                success:function(data, stat) { this.instance.processXML(data); }
+                success:function(data, stat) { 
+					instance.processXML(data); }
     //            error: function(req, stat, error) { alert(stat+"; "+error); }
              });
         };

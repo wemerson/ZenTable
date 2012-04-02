@@ -7,5 +7,10 @@ For a demo and documentation go to http://www.zentense.com/zenweb/en/zentable
 
 For feedback email kurt@zentense.com
 
+This fork is a work of Will Emerson. (wemerson@livelihoodtech.com)
+Changes are to allow async updating of table from another table. Instance and cache are made global variables so that they can be called from custom javascript on page.
+
+More details later.
+
  
 
